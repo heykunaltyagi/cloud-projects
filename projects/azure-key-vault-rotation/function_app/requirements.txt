@@ -1,0 +1,8 @@
+// requirements.txt
+azure-functions
+azure-identity
+azure-keyvault-keys
+azure-eventhub
+azure-cosmos
+requests
+python-dateutil
