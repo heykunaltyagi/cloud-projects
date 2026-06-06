@@ -19,3 +19,8 @@ variable "dry_run_rotation" {
   default     = true
   description = "If true, simulate rotation without actually creating new key versions"
 }
+
+variable "subscription_id" {
+  type        = string
+  description = "Azure subscription id to target for resource creation"
+}
