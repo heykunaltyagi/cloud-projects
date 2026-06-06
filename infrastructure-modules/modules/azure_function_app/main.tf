@@ -102,9 +102,7 @@ resource "azurerm_linux_function_app" "key_rotation" {
     "KEY_VAULT_NAME"                      = var.key_vault_name
     "EVENT_HUB_CONNECTION_STRING"         = azurerm_eventhub_namespace.main.default_primary_connection_string
     "EVENT_HUB_NAME"                      = azurerm_eventhub.rotation_audit.name
-    "COSMOS_DB_CONNECTION_STRING"         = var.cosmos_db_connection_string
-    "COSMOS_DB_DATABASE"                  = var.cosmos_db_database_name
-    "COSMOS_DB_CONTAINER"                 = var.cosmos_db_container_name
+    # Cosmos DB removed: rotation history not stored
     "DRY_RUN"                             = tostring(var.dry_run_rotation)
     "ROTATION_VALIDATION_TIMEOUT_SECONDS" = "300"
   }

@@ -11,14 +11,6 @@ module "key_vault" {
   tenant_id           = data.azurerm_client_config.current.tenant_id
 }
 
-module "cosmos_db" {
-  source              = "../../../infrastructure-modules/modules/azure_cosmos_db"
-  environment         = var.environment
-  azure_region        = var.azure_region
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
-}
-
 module "function_app" {
   source                      = "../../../infrastructure-modules/modules/azure_function_app"
   environment                 = var.environment
@@ -27,9 +19,6 @@ module "function_app" {
   location                    = azurerm_resource_group.main.location
   key_vault_id                = module.key_vault.key_vault_id
   key_vault_name              = module.key_vault.key_vault_name
-  cosmos_db_connection_string = module.cosmos_db.cosmos_connection_string
-  cosmos_db_database_name     = module.cosmos_db.cosmos_database_name
-  cosmos_db_container_name    = module.cosmos_db.cosmos_container_name
   dry_run_rotation            = var.dry_run_rotation
 }
 
