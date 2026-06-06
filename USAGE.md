@@ -11,8 +11,8 @@ The `cloud-projects` monorepo contains **reusable Terraform modules** that centr
 | Module | Purpose |
 |--------|----------|
 | `azure_key_vault` | Azure Key Vault with rotation-ready keys and policies |
-| `azure_cosmos_db` | Cosmos DB account, database, and container for audit/history storage |
 | `azure_function_app` | Azure Function App with storage, identity, and Event Hub for rotation logic |
+| `azure_event_grid` | Event Grid resources and subscriptions for Key Vault events |
 | `azure_event_grid` | Event Grid resources and subscriptions for Key Vault events |
 | `azure_monitoring` | Azure Monitor action groups and failure alerts |
 
@@ -51,14 +51,14 @@ data "azurerm_client_config" "current" {}
 
 resource "azurerm_resource_group" "main" {
   name     = "rg-myapp-${var.environment}"
-  location = var.azure_region
+  location = var.location
 }
 
 module "key_vault" {
   source = "git::https://github.com/heykunaltyagi/cloud-projects.git//infrastructure-modules/modules/azure_key_vault"
 
   environment         = var.environment
-  azure_region        = var.azure_region
+  location        = var.location
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
 }
@@ -88,7 +88,7 @@ module "key_vault" {
   source = "../../cloud-projects/infrastructure-modules/modules/azure_key_vault"
 
   environment         = var.environment
-  azure_region        = var.azure_region
+  location        = var.location
   resource_group_name = azurerm_resource_group.main.name
   tenant_id           = data.azurerm_client_config.current.tenant_id
 }

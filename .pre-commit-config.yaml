@@ -1,0 +1,15 @@
+repos:
+  - repo: https://github.com/antonbabenko/pre-commit-terraform
+    rev: v1.79.0
+    hooks:
+      - id: terraform_fmt
+      - id: terraform_validate
+
+  - repo: https://github.com/terraform-docs/terraform-docs
+    rev: v0.16.0
+    hooks:
+      - id: terraform-docs-system
+        args: ["markdown", ".", "--output-file", "README.md", "--output-mode", "inject", "--config", ".terraform-docs.yml", "--recursive"]
+
+
+

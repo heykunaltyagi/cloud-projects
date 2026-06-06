@@ -37,7 +37,7 @@ cloud-learning/
 
 - `projects/azure-key-vault-rotation/`
   - Available Azure Key Vault key rotation project.
-  - Deploys Terraform resources, Azure Functions, Event Grid, Event Hub, Cosmos DB, and monitoring.
+  - Deploys Terraform resources, Azure Functions, Event Grid, Event Hub, and monitoring.
   - Uses shared modules in `infrastructure-modules/`.
 
 - `projects/aws-self-healing-infrastructure/`
@@ -46,7 +46,7 @@ cloud-learning/
 
 - `infrastructure-modules/`
   - Central shared Terraform modules repository.
-  - Hosts reusable Azure modules for key vault, Cosmos DB, function app, event grid, and monitoring.
+  - Hosts reusable Azure modules for key vault, function app, event grid, and monitoring.
 
 - `cloud-learning/`
   - Experimental projects and proofs of concept.
@@ -58,8 +58,33 @@ cloud-learning/
 infrastructure-modules/
 ├── modules/
 │   ├── azure_key_vault/              🔐 Secure key storage with rotation-ready keys and policies
-│   ├── azure_cosmos_db/              🗄️ NoSQL database for audit history and rotation logs
 │   ├── azure_function_app/           ⚡ Serverless compute for key rotation automation
+│   ├── azure_event_grid/             📡 Event routing from Key Vault to Function App
 │   ├── azure_event_grid/             📡 Event routing from Key Vault to Function App
 │   └── azure_monitoring/             📊 Alerts and monitoring for rotation failures
 ```
+<!-- BEGIN_TF_DOCS -->
+## Requirements
+
+No requirements.
+
+## Providers
+
+No providers.
+
+## Modules
+
+No modules.
+
+## Resources
+
+No resources.
+
+## Inputs
+
+No inputs.
+
+## Outputs
+
+No outputs.
+<!-- END_TF_DOCS -->
