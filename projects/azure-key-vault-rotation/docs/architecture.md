@@ -13,7 +13,7 @@ Azure Function App
       / \
      /   \
     ↓     ↓
-Event Hub  Cosmos DB
+Event Hub
           ↓
      Azure Monitor
 ```
@@ -33,17 +33,15 @@ Event Hub  Cosmos DB
    - Receives Key Vault events from Event Grid.
    - Contains the rotation logic written in Python.
    - Uses access to Key Vault and the Event Hub.
-   - If rotation occurs, it writes audit data to Event Hub and rotation history to Cosmos DB.
+   - If rotation occurs, it writes audit and rotation events to Event Hub.
 
 4. **Azure Event Hub**
    - Collects audit records for each key rotation or related action.
    - Enables downstream analytics or processing of rotation events.
 
-5. **Azure Cosmos DB**
-   - Stores rotation history and metadata for audit/tracking.
-   - Provides a persistent record of key rotation operations.
-
-6. **Azure Monitor**
+5. **Azure Monitor**
+   - Watches the Function App execution.
+   - Sends alerts when the rotation function fails or reports errors.
    - Watches the Function App execution.
    - Sends alerts when the rotation function fails or reports errors.
 
@@ -52,7 +50,6 @@ Event Hub  Cosmos DB
 The project now centralizes reusable infrastructure components in `infrastructure-modules/`:
 
 - `azure_key_vault/`
-- `azure_cosmos_db/`
 - `azure_function_app/`
 - `azure_event_grid/`
 - `azure_monitoring/`

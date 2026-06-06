@@ -2,7 +2,7 @@ variable "environment" {
   type = string
 }
 
-variable "azure_region" {
+variable "location" {
   type = string
 }
 
@@ -12,4 +12,12 @@ variable "resource_group_name" {
 
 variable "tenant_id" {
   type = string
+}
+
+variable "naming_suffix" {
+  type = string
+}
+
+variable "purge_protection_enabled" {
+  type = bool
 }

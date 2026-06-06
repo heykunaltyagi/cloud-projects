@@ -2,28 +2,7 @@
 
 Reusable Terraform module for the Azure Function App and Event Hub resources.
 
-## Inputs
-
-- `environment`
-- `azure_region`
-- `resource_group_name`
-- `location`
-- `key_vault_id`
-- `key_vault_name`
-- `cosmos_db_connection_string`
-- `cosmos_db_database_name`
-- `cosmos_db_container_name`
-- `dry_run_rotation`
-
-## Outputs
-
-- `function_id`
-- `function_app_principal_id`
-- `storage_account_id`
-- `eventhub_id`
-- `eventhub_name`
-- `eventhub_connection_string`
-
+The inputs, outputs, and resource details below are generated from the module interface.
 
 <!-- BEGIN_TF_DOCS -->
 ## Requirements
@@ -34,8 +13,7 @@ No requirements.
 
 | Name | Version |
 | ---- | ------- |
-| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | n/a |
-| <a name="provider_random"></a> [random](#provider\_random) | n/a |
+| <a name="provider_azurerm"></a> [azurerm](#provider\_azurerm) | 4.76.0 |
 
 ## Modules
 
@@ -45,32 +23,35 @@ No modules.
 
 | Name | Type |
 | ---- | ---- |
-| [azurerm_app_service_plan.function_plan](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/app_service_plan) | resource |
 | [azurerm_eventhub.rotation_audit](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub) | resource |
 | [azurerm_eventhub_consumer_group.analytics](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_consumer_group) | resource |
 | [azurerm_eventhub_namespace.main](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/eventhub_namespace) | resource |
-| [azurerm_function_app.key_rotation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/function_app) | resource |
 | [azurerm_key_vault_access_policy.function_app](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/key_vault_access_policy) | resource |
+| [azurerm_linux_function_app.key_rotation](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/linux_function_app) | resource |
+| [azurerm_service_plan.function_plan](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/service_plan) | resource |
 | [azurerm_storage_account.function_storage](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/storage_account) | resource |
 | [azurerm_user_assigned_identity.function_app](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/user_assigned_identity) | resource |
-| [random_string.func_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
-| [random_string.storage_suffix](https://registry.terraform.io/providers/hashicorp/random/latest/docs/resources/string) | resource |
+| [azurerm_client_config.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/client_config) | data source |
+| [azurerm_subscription.current](https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/data-sources/subscription) | data source |
 
 ## Inputs
 
 | Name | Description | Type | Default | Required |
 | ---- | ----------- | ---- | ------- | :------: |
-| <a name="input_azure_region"></a> [azure\_region](#input\_azure\_region) | n/a | `string` | n/a | yes |
-| <a name="input_cosmos_db_connection_string"></a> [cosmos\_db\_connection\_string](#input\_cosmos\_db\_connection\_string) | n/a | `string` | n/a | yes |
-| <a name="input_cosmos_db_container_name"></a> [cosmos\_db\_container\_name](#input\_cosmos\_db\_container\_name) | n/a | `string` | n/a | yes |
-| <a name="input_cosmos_db_database_name"></a> [cosmos\_db\_database\_name](#input\_cosmos\_db\_database\_name) | n/a | `string` | n/a | yes |
 | <a name="input_dry_run_rotation"></a> [dry\_run\_rotation](#input\_dry\_run\_rotation) | n/a | `bool` | n/a | yes |
 | <a name="input_environment"></a> [environment](#input\_environment) | n/a | `string` | n/a | yes |
+| <a name="input_eventhub_capacity"></a> [eventhub\_capacity](#input\_eventhub\_capacity) | n/a | `number` | `1` | no |
+| <a name="input_eventhub_sku"></a> [eventhub\_sku](#input\_eventhub\_sku) | n/a | `string` | `"Standard"` | no |
+| <a name="input_function_app_settings"></a> [function\_app\_settings](#input\_function\_app\_settings) | n/a | `map(string)` | `{}` | no |
+| <a name="input_function_site_config"></a> [function\_site\_config](#input\_function\_site\_config) | n/a | `map(any)` | `{}` | no |
 | <a name="input_key_vault_id"></a> [key\_vault\_id](#input\_key\_vault\_id) | n/a | `string` | n/a | yes |
 | <a name="input_key_vault_name"></a> [key\_vault\_name](#input\_key\_vault\_name) | n/a | `string` | n/a | yes |
 | <a name="input_location"></a> [location](#input\_location) | n/a | `string` | n/a | yes |
+| <a name="input_naming_suffix"></a> [naming\_suffix](#input\_naming\_suffix) | n/a | `string` | n/a | yes |
 | <a name="input_resource_group_name"></a> [resource\_group\_name](#input\_resource\_group\_name) | n/a | `string` | n/a | yes |
-| <a name="input_slack_webhook_url"></a> [slack\_webhook\_url](#input\_slack\_webhook\_url) | n/a | `string` | n/a | yes |
+| <a name="input_service_plan_os_type"></a> [service\_plan\_os\_type](#input\_service\_plan\_os\_type) | n/a | `string` | `"Linux"` | no |
+| <a name="input_service_plan_sku_name"></a> [service\_plan\_sku\_name](#input\_service\_plan\_sku\_name) | n/a | `string` | `"Y1"` | no |
+| <a name="input_storage_account_replication_type"></a> [storage\_account\_replication\_type](#input\_storage\_account\_replication\_type) | n/a | `string` | `"LRS"` | no |
 
 ## Outputs
 

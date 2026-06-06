@@ -7,7 +7,6 @@ from datetime import datetime, timedelta
 from azure.identity import DefaultAzureCredential
 from azure.keyvault.keys import KeyClient
 from azure.eventhub import EventHubProducerClient
-from azure.cosmos import CosmosClient, exceptions
 import requests
 import os
 
@@ -30,15 +29,8 @@ class KeyRotationEngine:
             eventhub_name=os.environ['EVENT_HUB_NAME']
         )
         
-        cosmos_client = CosmosClient.from_connection_string(
-            os.environ['COSMOS_DB_CONNECTION_STRING']
-        )
-        self.db_client = cosmos_client.get_database_client(
-            os.environ['COSMOS_DB_DATABASE']
-        )
-        self.rotation_container = self.db_client.get_container_client(
-            os.environ['COSMOS_DB_CONTAINER']
-        )
+        # Cosmos DB removed: rotation history not stored
+        self.rotation_container = None
     
     def handle_key_expiration_event(self, event: dict) -> dict:
         """Main entry point: triggered by Event Grid when key near expiry"""
@@ -115,25 +107,8 @@ class KeyRotationEngine:
     
     def _was_recently_rotated(self, key_name: str, hours: int = 24) -> bool:
         """Check if key was rotated in last N hours"""
-        try:
-            query = f"""
-                SELECT * FROM c 
-                WHERE c.key_name = @key_name 
-                AND c.action = 'rotation_completed'
-                AND c.timestamp > DateTimeAdd('hour', -{hours}, GetCurrentTimestamp())
-                ORDER BY c.timestamp DESC
-                LIMIT 1
-            """
-            
-            items = list(self.rotation_container.query_items(
-                query=query,
-                parameters=[{'name': '@key_name', 'value': key_name}]
-            ))
-            
-            return len(items) > 0
-        except Exception as e:
-            logger.warning(f"Could not check rotation history: {str(e)}")
-            return False
+        # Rotation history is not stored; always allow rotation checks to pass
+        return False
     
     def _get_current_key_version(self, key_name: str):
         """Get the current active version of a key"""
@@ -282,25 +257,8 @@ class KeyRotationEngine:
     
     def _log_rotation_event(self, key_name: str, old_version, new_version, status: str):
         """Store rotation event in Cosmos DB"""
-        
-        try:
-            doc = {
-                'id': f"{key_name}-{datetime.utcnow().isoformat()}",
-                'key_name': key_name,
-                'key_vault_name': self.key_vault_name,
-                'old_version': old_version.properties.version if old_version else None,
-                'new_version': new_version.properties.version if new_version else None,
-                'status': status,
-                'timestamp': datetime.utcnow().isoformat(),
-                'dry_run': self.dry_run,
-                'created_at': datetime.utcnow().timestamp()  # For TTL
-            }
-            
-            self.rotation_container.create_item(doc)
-            logger.info(f"Logged rotation event for {key_name}")
-        
-        except Exception as e:
-            logger.error(f"Failed to log rotation: {str(e)}")
+        # Rotation history persistence disabled. Log locally only.
+        logger.info(f"Rotation event (not persisted): {key_name} {status}")
     
     def _send_audit_event(self, key_name: str, action: str, new_key):
         """Send audit event to Event Hub"""

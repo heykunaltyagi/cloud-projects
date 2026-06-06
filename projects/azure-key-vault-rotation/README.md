@@ -9,7 +9,6 @@ A complete implementation of automated key rotation for Azure Key Vault using:
 - **Python** - Serverless rotation logic in Azure Functions
 - **Event Grid** - Event-driven trigger when keys near expiry
 - **Event Hub** - Audit logging
-- **Cosmos DB** - Rotation history and audit store
 - **Monitoring** - Alerts for function failures
 
 ## Project layout
@@ -28,7 +27,7 @@ azure-key-vault-rotation/
 └── docs/
 ```
 
-##Use the Complete Project
+## Use the Complete Project
 
 Clone and deploy the entire `azure-key-vault-rotation` project with all components pre-configured.
 
@@ -51,7 +50,6 @@ terraform apply -var-file=environments/dev.tfvars
 - ✅ Automatic key rotation for Azure Key Vault
 - ✅ Event-driven architecture with Azure Event Grid
 - ✅ Audit log streaming to Azure Event Hub
-- ✅ Rotation data stored in Cosmos DB
 - ✅ Monitoring and alerting via Azure Monitor
 - ✅ Shared Terraform modules under `infrastructure-modules/`
 
@@ -62,11 +60,6 @@ This project now consumes shared infrastructure modules from `infrastructure-mod
 ```hcl
 module "key_vault" {
   source = "../../infrastructure-modules/modules/azure_key_vault"
-  environment = var.environment
-}
-
-module "cosmos_db" {
-  source = "../../infrastructure-modules/modules/azure_cosmos_db"
   environment = var.environment
 }
 

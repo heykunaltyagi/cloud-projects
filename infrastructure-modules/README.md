@@ -8,8 +8,6 @@ Shared modules are consumed by individual project roots, such as `projects/azure
 
 - `azure_key_vault/`
   - Deploys Azure Key Vault and an application key for rotation.
-- `azure_cosmos_db/`
-  - Deploys Cosmos DB account, SQL database, and container for rotation history.
 - `azure_function_app/`
   - Deploys a function app, storage account, identity, and Event Hub for rotation logic.
 - `azure_event_grid/`
@@ -29,7 +27,7 @@ In a consuming project, point your module source to the shared module path:
 module "key_vault" {
   source = "../../infrastructure-modules/modules/azure_key_vault"
   environment = var.environment
-  azure_region = var.azure_region
+  location = var.location
   resource_group_name = azurerm_resource_group.main.name
   tenant_id = data.azurerm_client_config.current.tenant_id
 }

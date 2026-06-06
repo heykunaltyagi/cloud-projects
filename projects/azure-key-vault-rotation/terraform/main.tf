@@ -1,43 +1,41 @@
 resource "azurerm_resource_group" "main" {
   name     = "rg-key-rotation-${var.environment}"
-  location = var.azure_region
+  location = var.location
 }
 
 module "key_vault" {
-  source              = "../../../infrastructure-modules/modules/azure_key_vault"
-  environment         = var.environment
-  azure_region        = var.azure_region
-  resource_group_name = azurerm_resource_group.main.name
-  tenant_id           = data.azurerm_client_config.current.tenant_id
-}
-
-module "cosmos_db" {
-  source              = "../../../infrastructure-modules/modules/azure_cosmos_db"
-  environment         = var.environment
-  azure_region        = var.azure_region
-  resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_resource_group.main.location
+  source                   = "../../../infrastructure-modules/modules/azure_key_vault"
+  environment              = var.environment
+  location                 = var.location
+  resource_group_name      = azurerm_resource_group.main.name
+  tenant_id                = data.azurerm_client_config.current.tenant_id
+  naming_suffix            = var.naming_suffix
+  purge_protection_enabled = var.purge_protection_enabled
 }
 
 module "function_app" {
-  source                      = "../../../infrastructure-modules/modules/azure_function_app"
-  environment                 = var.environment
-  azure_region                = var.azure_region
-  resource_group_name         = azurerm_resource_group.main.name
-  location                    = azurerm_resource_group.main.location
-  key_vault_id                = module.key_vault.key_vault_id
-  key_vault_name              = module.key_vault.key_vault_name
-  cosmos_db_connection_string = module.cosmos_db.cosmos_connection_string
-  cosmos_db_database_name     = module.cosmos_db.cosmos_database_name
-  cosmos_db_container_name    = module.cosmos_db.cosmos_container_name
-  dry_run_rotation            = var.dry_run_rotation
+  source                           = "../../../infrastructure-modules/modules/azure_function_app"
+  environment                      = var.environment
+  location                         = var.location
+  resource_group_name              = azurerm_resource_group.main.name
+  key_vault_id                     = module.key_vault.key_vault_id
+  key_vault_name                   = module.key_vault.key_vault_name
+  dry_run_rotation                 = var.dry_run_rotation
+  naming_suffix                    = var.naming_suffix
+  storage_account_replication_type = var.storage_account_replication_type
+  service_plan_os_type             = var.service_plan_os_type
+  service_plan_sku_name            = var.service_plan_sku_name
+  eventhub_sku                     = var.eventhub_sku
+  eventhub_capacity                = var.eventhub_capacity
+  function_site_config             = var.function_site_config
+  function_app_settings            = var.function_app_settings
 }
 
 module "event_grid" {
   source                        = "../../../infrastructure-modules/modules/azure_event_grid"
   environment                   = var.environment
   resource_group_name           = azurerm_resource_group.main.name
-  location                      = azurerm_resource_group.main.location
+  location                      = var.location
   key_vault_id                  = module.key_vault.key_vault_id
   function_app_function_id      = module.function_app.function_id
   function_storage_account_id   = module.function_app.storage_account_id

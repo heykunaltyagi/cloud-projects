@@ -13,9 +13,6 @@ def engine():
         'KEY_VAULT_NAME': 'test-kv',
         'EVENT_HUB_CONNECTION_STRING': 'test-conn',
         'EVENT_HUB_NAME': 'test-hub',
-        'COSMOS_DB_CONNECTION_STRING': 'test-cosmos',
-        'COSMOS_DB_DATABASE': 'test-db',
-        'COSMOS_DB_CONTAINER': 'test-container',
         'DRY_RUN': 'true'
     }):
         with patch('KeyRotationTrigger.KeyClient'):

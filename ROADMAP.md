@@ -6,7 +6,7 @@ This roadmap shows the current direction for the `cloud-projects` monorepo.
 
 - ✅ Centralize shared Terraform modules in `infrastructure-modules/`
 - ✅ Implement Azure Key Vault automated key rotation
-- ✅ Use shared Azure modules for Key Vault, Cosmos DB, Function App, Event Grid, and Monitoring
+- ✅ Use shared Azure modules for Key Vault, Function App, Event Grid, and Monitoring
 - ✅ Add documentation and contributor guidance
 - ✅ Add GitHub release automation
 

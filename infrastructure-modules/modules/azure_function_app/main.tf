@@ -1,19 +1,9 @@
-resource "random_string" "storage_suffix" {
-  length  = 6
-  special = false
-}
-
-resource "random_string" "func_suffix" {
-  length  = 6
-  special = false
-}
-
 resource "azurerm_storage_account" "function_storage" {
-  name                     = "stfuncrotation${var.environment}${random_string.storage_suffix.result}"
+  name                     = "stfuncrotation${var.environment}${var.naming_suffix}"
   resource_group_name      = var.resource_group_name
   location                 = var.location
   account_tier             = "Standard"
-  account_replication_type = "LRS"
+  account_replication_type = var.storage_account_replication_type
   account_kind             = "StorageV2"
 }
 
@@ -21,8 +11,8 @@ resource "azurerm_service_plan" "function_plan" {
   name                = "asp-key-rotation-${var.environment}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  os_type             = "Linux"
-  sku_name            = "Y1"
+  os_type             = var.service_plan_os_type
+  sku_name            = var.service_plan_sku_name
 }
 
 resource "azurerm_user_assigned_identity" "function_app" {
@@ -35,8 +25,8 @@ resource "azurerm_eventhub_namespace" "main" {
   name                = "ehn-keyrotation-${var.environment}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  sku                 = "Standard"
-  capacity            = 1
+  sku                 = var.eventhub_sku
+  capacity            = var.eventhub_capacity
 
   tags = {
     purpose = "key-rotation-audit"
@@ -81,33 +71,38 @@ resource "azurerm_key_vault_access_policy" "function_app" {
   ]
 }
 
+locals {
+  default_app_settings = {
+    "FUNCTIONS_WORKER_RUNTIME"            = "python"
+    "ENABLE_MSBUILD"                      = "true"
+    "KEY_VAULT_NAME"                      = var.key_vault_name
+    "EVENT_HUB_CONNECTION_STRING"         = azurerm_eventhub_namespace.main.default_primary_connection_string
+    "EVENT_HUB_NAME"                      = azurerm_eventhub.rotation_audit.name
+    "DRY_RUN"                             = tostring(var.dry_run_rotation)
+    "ROTATION_VALIDATION_TIMEOUT_SECONDS" = "300"
+  }
+}
+
 resource "azurerm_linux_function_app" "key_rotation" {
-  name                       = "func-key-rotation-${var.environment}-${random_string.func_suffix.result}"
+  name                       = "func-key-rotation-${var.environment}-${var.naming_suffix}"
   location                   = var.location
   resource_group_name        = var.resource_group_name
   service_plan_id            = azurerm_service_plan.function_plan.id
   storage_account_name       = azurerm_storage_account.function_storage.name
   storage_account_access_key = azurerm_storage_account.function_storage.primary_access_key
-  site_config {}
-  functions_extension_version = "~4"
+  site_config {
+    always_on          = lookup(var.function_site_config, "always_on", null)
+    http2_enabled      = lookup(var.function_site_config, "http2_enabled", null)
+    websockets_enabled = lookup(var.function_site_config, "websockets_enabled", null)
+  }
+  functions_extension_version = lookup(var.function_site_config, "functions_extension_version", "~4")
 
   identity {
     type         = "UserAssigned"
     identity_ids = [azurerm_user_assigned_identity.function_app.id]
   }
 
-  app_settings = {
-    "FUNCTIONS_WORKER_RUNTIME"            = "python"
-    "ENABLE_MSBUILD"                      = "true"
-    "KEY_VAULT_NAME"                      = var.key_vault_name
-    "EVENT_HUB_CONNECTION_STRING"         = azurerm_eventhub_namespace.main.default_primary_connection_string
-    "EVENT_HUB_NAME"                      = azurerm_eventhub.rotation_audit.name
-    "COSMOS_DB_CONNECTION_STRING"         = var.cosmos_db_connection_string
-    "COSMOS_DB_DATABASE"                  = var.cosmos_db_database_name
-    "COSMOS_DB_CONTAINER"                 = var.cosmos_db_container_name
-    "DRY_RUN"                             = tostring(var.dry_run_rotation)
-    "ROTATION_VALIDATION_TIMEOUT_SECONDS" = "300"
-  }
+  app_settings = merge(local.default_app_settings, var.function_app_settings)
 
   depends_on = [
     azurerm_key_vault_access_policy.function_app
