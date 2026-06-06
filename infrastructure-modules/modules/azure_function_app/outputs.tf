@@ -1,5 +1,5 @@
 output "function_id" {
-  value = azurerm_function_app.key_rotation.id
+  value = azurerm_linux_function_app.key_rotation.id
 }
 
 output "function_app_principal_id" {

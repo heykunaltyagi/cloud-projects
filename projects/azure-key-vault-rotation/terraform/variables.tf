@@ -10,11 +10,6 @@ variable "azure_region" {
   default = "eastus"
 }
 
-variable "slack_webhook_url" {
-  type      = string
-  sensitive = true
-}
-
 variable "alert_email" {
   type = string
 }

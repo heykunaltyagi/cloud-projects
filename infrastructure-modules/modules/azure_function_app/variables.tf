@@ -34,10 +34,6 @@ variable "cosmos_db_container_name" {
   type = string
 }
 
-variable "slack_webhook_url" {
-  type = string
-}
-
 variable "dry_run_rotation" {
   type = bool
 }

@@ -17,17 +17,12 @@ resource "azurerm_storage_account" "function_storage" {
   account_kind             = "StorageV2"
 }
 
-resource "azurerm_app_service_plan" "function_plan" {
+resource "azurerm_service_plan" "function_plan" {
   name                = "asp-key-rotation-${var.environment}"
   location            = var.location
   resource_group_name = var.resource_group_name
-  kind                = "FunctionApp"
-  reserved            = true
-
-  sku {
-    tier = "Dynamic"
-    size = "Y1"
-  }
+  os_type             = "Linux"
+  sku_name            = "Y1"
 }
 
 resource "azurerm_user_assigned_identity" "function_app" {
@@ -86,15 +81,15 @@ resource "azurerm_key_vault_access_policy" "function_app" {
   ]
 }
 
-resource "azurerm_function_app" "key_rotation" {
+resource "azurerm_linux_function_app" "key_rotation" {
   name                       = "func-key-rotation-${var.environment}-${random_string.func_suffix.result}"
   location                   = var.location
   resource_group_name        = var.resource_group_name
-  app_service_plan_id        = azurerm_app_service_plan.function_plan.id
+  service_plan_id            = azurerm_service_plan.function_plan.id
   storage_account_name       = azurerm_storage_account.function_storage.name
   storage_account_access_key = azurerm_storage_account.function_storage.primary_access_key
-  os_type                    = "linux"
-  version                    = "~4"
+  site_config {}
+  functions_extension_version = "~4"
 
   identity {
     type         = "UserAssigned"
@@ -110,7 +105,6 @@ resource "azurerm_function_app" "key_rotation" {
     "COSMOS_DB_CONNECTION_STRING"         = var.cosmos_db_connection_string
     "COSMOS_DB_DATABASE"                  = var.cosmos_db_database_name
     "COSMOS_DB_CONTAINER"                 = var.cosmos_db_container_name
-    "SLACK_WEBHOOK_URL"                   = var.slack_webhook_url
     "DRY_RUN"                             = tostring(var.dry_run_rotation)
     "ROTATION_VALIDATION_TIMEOUT_SECONDS" = "300"
   }
