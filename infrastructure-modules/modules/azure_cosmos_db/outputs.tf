@@ -1,5 +1,5 @@
 output "cosmos_connection_string" {
-  value = azurerm_cosmosdb_account.rotation_history.connection_strings[0]
+  value = azurerm_cosmosdb_account.rotation_history.primary_sql_connection_string
 }
 
 output "cosmos_database_name" {

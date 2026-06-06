@@ -13,7 +13,6 @@ Reusable Terraform module for the Azure Function App and Event Hub resources.
 - `cosmos_db_connection_string`
 - `cosmos_db_database_name`
 - `cosmos_db_container_name`
-- `slack_webhook_url`
 - `dry_run_rotation`
 
 ## Outputs

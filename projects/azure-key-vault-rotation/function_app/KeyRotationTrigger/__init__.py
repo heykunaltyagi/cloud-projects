@@ -72,10 +72,7 @@ class KeyRotationEngine:
             # Step 4: Log rotation to history
             self._log_rotation_event(key_name, old_version, new_key, 'success')
             
-            # Step 5: Notify
-            self._notify_slack(key_name, new_key, 'success')
-            self._send_audit_event(key_name, 'rotation_completed', new_key)
-            
+           
             return {
                 'status': 'success',
                 'key_name': key_name,
@@ -85,7 +82,7 @@ class KeyRotationEngine:
         
         except Exception as e:
             logger.error(f"Key rotation failed: {str(e)}", exc_info=True)
-            self._notify_slack(key_name, None, 'failed', error=str(e))
+            # Slack notifications are disabled for this deployment.
             raise
     
     def _should_rotate(self, key_name: str) -> bool:
